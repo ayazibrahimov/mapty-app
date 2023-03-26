@@ -1,6 +1,5 @@
 'use strict';
 
-// prettier-ignore
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const form = document.querySelector('.form');
@@ -13,6 +12,59 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 // let map, mapEvent;
 // let mapEvent;
+
+class Workout {
+     
+    date = new Date();
+    id = (Date.now() + '').slice(-10);
+
+    constructor(coords,distance,duration){
+        this.coords = coords;
+        this.distance = distance;
+        this.duration = duration;   
+    }
+
+}
+
+class Running extends Workout {
+    constructor(coords,distance,duration,cadance){
+        super(coords,distance,duration);
+        this.cadance = cadance
+    }
+
+    //min/km
+
+    calcPace(){
+      this.pace = this.duration / this.distance
+      return this.pace
+    }
+
+}
+
+
+class Cycling extends Workout {
+    constructor(coords,distance,duration,elevationGain){
+        super(coords,distance,duration);
+        this.elevationGain = elevationGain
+    }
+
+    calcSpeed(){
+        this.speed = this.distance / (this.duration * 60)
+        return this.speed
+    }
+
+}
+
+
+const run = new Running([18,-16],60,12,2) 
+const cycle = new Cycling([15,-5],40,5,1) 
+
+console.log(run);
+console.log(cycle);
+
+
+
+
 
 class App{
     
@@ -106,21 +158,4 @@ const app = new App()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////
