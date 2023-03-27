@@ -170,14 +170,16 @@ class App{
     
         // const {lat,lng} = this.#mapEvent.latlng
     
-        this._renderWorkOut(workout)
+        this._renderWorkOutMarker(workout)
+
+        //render workout
        
 
         inputElevation.value = inputCadence.value = inputDuration.value = inputDistance.value = ''
     }
 
 
-    _renderWorkOut(workout){
+    _renderWorkOutMarker(workout){
         L.marker(workout.coords)
         .addTo(this.#map)
         .bindPopup(
