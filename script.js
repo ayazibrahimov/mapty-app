@@ -27,8 +27,12 @@ class Workout {
 }
 
 class Running extends Workout {
+     
+    type = 'running'
+
     constructor(coords,distance,duration,cadance){
         super(coords,distance,duration);
+        // this.type = 'running'
         this.cadance = cadance
     }
 
@@ -38,11 +42,13 @@ class Running extends Workout {
       this.pace = this.duration / this.distance
       return this.pace
     }
-
 }
 
 
 class Cycling extends Workout {
+    
+    type = 'cycling'
+
     constructor(coords,distance,duration,elevationGain){
         super(coords,distance,duration);
         this.elevationGain = elevationGain
@@ -52,30 +58,20 @@ class Cycling extends Workout {
         this.speed = this.distance / (this.duration * 60)
         return this.speed
     }
-
 }
-
-
-const run = new Running([18,-16],60,12,2) 
-const cycle = new Cycling([15,-5],40,5,1) 
-
-console.log(run);
-console.log(cycle);
-
-
-
 
 
 class App{
     
     #map;
     #mapEvent;
+    #workouts=[]
 
     constructor(){
         this._getPosition()
 
         form.addEventListener('submit',this._newWork.bind(this))
-        inputType.addEventListener('change',this._toggleElevationField())
+        inputType.addEventListener('change',this._toggleElevationField.bind(this))
     }
 
     _getPosition() {
@@ -125,16 +121,64 @@ class App{
     }
 
     _newWork(e){
+        
+        const filterNums = (...datas) => datas.every(data=>Number.isFinite(data))
+        const filterPositive = (...datas)=>datas.every(data=>data > 0)
+        
         e.preventDefault()
         
-        
-        inputElevation.value = inputCadence.value = inputDuration.value = inputDistance.value = ''
+        const type = inputType.value;
+        const distance = +inputDistance.value;
+        const duration = +inputDuration.value;
+        const {lat,lng} = this.#mapEvent.latlng
+        let workout;
+
+
+        if(type === "running"){
+          
+          const cadence = +inputCadence.value
+          
+
+          if(!filterNums(distance,duration,cadence) || !filterPositive(distance,duration,cadence)){
+               return alert('Ancaq nomre')
+          }
+
+           workout = new Running([lat,lng],distance,duration,cadence)
+           
+           this.#workouts.push(workout)
+        }
+
+
+        if(type === "cycling"){
+
+            const elevation = +inputElevation.value
+          
+
+            if(!filterNums(distance,duration,elevation) || !filterPositive(distance,duration,elevation)){
+                 return alert('Ancaq nomre')
+            }
+
+            workout = new Cycling([lat,lng],distance,duration,elevation)
+           
+            this.#workouts.push(workout)
+        }
+
+
+        console.log(this.#workouts);
     
         //display marker
     
-        const {lat,lng} = this.#mapEvent.latlng
-                    
-        L.marker([lat,lng])
+        // const {lat,lng} = this.#mapEvent.latlng
+    
+        this._renderWorkOut(workout)
+       
+
+        inputElevation.value = inputCadence.value = inputDuration.value = inputDistance.value = ''
+    }
+
+
+    _renderWorkOut(workout){
+        L.marker(workout.coords)
         .addTo(this.#map)
         .bindPopup(
             L.popup({
@@ -142,7 +186,7 @@ class App{
             minWidth:100,
             autoClose:false,
             closeOnClick:false,
-            className:'running-popup'
+            className:`${workout.type}-popup`
         }))
         .setPopupContent('Salam ay qaqa')
         .openPopup();
@@ -152,8 +196,6 @@ class App{
 
 
 const app = new App()
-
-
 
 
 
