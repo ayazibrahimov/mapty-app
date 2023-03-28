@@ -110,8 +110,7 @@ class App{
                   L.marker(coords).addTo(this.#map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup();
     
                   this.#map.on('click',this._showForm.bind(this))
-
-            
+      
     }
 
 
