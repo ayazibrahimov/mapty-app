@@ -74,13 +74,14 @@ class App{
     
     #map;
     #mapEvent;
+    #dataZoom=14;
     #workouts=[]
 
     constructor(){
         this._getPosition()
-
         form.addEventListener('submit',this._newWork.bind(this))
         inputType.addEventListener('change',this._toggleElevationField.bind(this))
+        containerWorkouts.addEventListener('click',this._movePositionData.bind(this))
     }
 
     _getPosition() {
@@ -100,7 +101,7 @@ class App{
     
             console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
     
-             this.#map = L.map('map').setView(coords, 14);
+             this.#map = L.map('map').setView(coords, this.#dataZoom);
     
               L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -275,6 +276,25 @@ class App{
         .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}${workout.dataInfo}`)
         .openPopup();
     }
+
+
+    _movePositionData(e){
+        const workoutEl = e.target.closest('.workout')
+
+
+        if(!workoutEl) return;
+     
+
+        const workout = this.#workouts.find(work=>work.id === workoutEl.dataset.id)
+
+        this.#map.setView(workout.coords,this.#dataZoom,{
+            animate:true,
+            pan:{
+                duration:1
+            }
+        })
+    }
+    
 
 }
 
